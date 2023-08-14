@@ -1,0 +1,1 @@
+Core package contains anything that is shared between multiple features
