@@ -21,9 +21,14 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+
     }
 
     buildTypes {
+        debug {
+            buildConfigField("String", "API_KEY", "\"${project.property("API_KEY")}\"")
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(
