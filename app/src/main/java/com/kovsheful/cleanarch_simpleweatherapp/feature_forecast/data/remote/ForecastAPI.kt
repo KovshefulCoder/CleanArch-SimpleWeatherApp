@@ -11,5 +11,9 @@ interface ForecastAPI {
         @Query("days") days: Int,
         @Query("key") apiKey: String
     ): ForecastDto
+
+    companion object {
+        const val BASE_API = "https://api.weatherapi.com/v1/forecast.json"
+    }
 }
 

@@ -3,7 +3,10 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id ("kotlin-kapt")
     id ("dagger.hilt.android.plugin")
+}
 
+kotlin {
+    jvmToolchain(11)
 }
 
 android {
@@ -21,8 +24,6 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
-
-
     }
 
     buildTypes {
@@ -48,7 +49,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.3"
+        kotlinCompilerExtensionVersion = "1.4.7"
     }
     packaging {
         resources {
