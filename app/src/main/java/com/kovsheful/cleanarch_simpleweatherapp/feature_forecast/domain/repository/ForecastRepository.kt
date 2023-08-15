@@ -2,6 +2,7 @@ package com.kovsheful.cleanarch_simpleweatherapp.feature_forecast.domain.reposit
 
 import com.kovsheful.cleanarch_simpleweatherapp.feature_forecast.core.util.Resource
 import com.kovsheful.cleanarch_simpleweatherapp.feature_forecast.domain.models.ForecastDay
+import kotlinx.coroutines.flow.Flow
 
 interface ForecastRepository {
 
