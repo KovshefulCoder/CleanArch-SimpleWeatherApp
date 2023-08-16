@@ -1,6 +1,9 @@
 package com.kovsheful.cleanarch_simpleweatherapp.feature_forecast.data.remote.dto
 
 import com.kovsheful.cleanarch_simpleweatherapp.feature_forecast.domain.models.ForecastDay
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.*
 
 data class Day(
     val avghumidity: Int,
@@ -23,12 +26,20 @@ data class Day(
     val totalprecip_mm: Int,
     val uv: Int
 ) {
-    fun toForecast() : ForecastDay {
+    fun toForecastDay(date: String) : ForecastDay {
+        val inputFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.ENGLISH)
+        val dateTime = LocalDateTime.parse(date, inputFormat)
+        val outputFormat = DateTimeFormatter.ofPattern("EEEE, MMMM dd", Locale.ENGLISH)
+        val output = Pair(
+            dateTime.format(outputFormat).split(",").first(),
+            dateTime.format(outputFormat).split(",").last()
+        )
         return ForecastDay(
+            date = output,
             text = condition.text,
             icon = condition.icon,
-            avgtempC = avgtemp_c,
-            maxwindKph = maxwind_kph,
+            avgtempC = avgtemp_c.toInt(),
+            maxwindKph = maxwind_kph.toInt(),
             avgHumidity = avghumidity
         )
     }

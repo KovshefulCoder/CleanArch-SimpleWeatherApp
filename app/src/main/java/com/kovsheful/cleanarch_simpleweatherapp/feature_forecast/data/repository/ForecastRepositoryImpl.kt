@@ -1,5 +1,6 @@
 package com.kovsheful.cleanarch_simpleweatherapp.feature_forecast.data.repository
 
+import android.util.Log
 import com.kovsheful.cleanarch_simpleweatherapp.feature_forecast.core.util.Resource
 import com.kovsheful.cleanarch_simpleweatherapp.feature_forecast.data.remote.ForecastAPI
 import com.kovsheful.cleanarch_simpleweatherapp.feature_forecast.domain.models.ForecastDay
@@ -25,13 +26,16 @@ class ForecastRepositoryImpl(
                 days = days,
                 apiKey = apiKey
             ).forecast.forecastday.map {
-                it.day.toForecast()
+                it.day.toForecastDay(date = it.date)
             }
+            Log.i("ForecastRepositoryImpl", "RESULT getForecast: $forecast")
             emit(Resource.Success(data = forecast))
         } catch (e: HttpException) {
             emit(Resource.Error(e.code().toString()))
+            Log.i("ForecastRepositoryImpl", "RESULT getForecast: ${e.code()}")
         } catch (e: IOException) {
             emit(Resource.Error("Couldn`t reach server!"))
+            Log.i("ForecastRepositoryImpl", "RESULT getForecast: ${e.message}")
         }
     }
 }
