@@ -38,8 +38,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.PlatformTextStyle
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -74,7 +77,7 @@ internal fun ForecastView() {
     )
 }
 
-@Preview(backgroundColor = 0xFF3B3D49)
+//@Preview(backgroundColor = 0xFF3B3D49)
 @Composable
 fun PrevPrivateForecastView() {
     PrivateForecastView(
@@ -277,6 +280,7 @@ private fun PrivateForecastView(
     }
 }
 
+
 @Preview(showBackground = true, backgroundColor = 0xFF3B3D49)
 @Composable
 fun CollapsedDayForecast(
@@ -305,118 +309,171 @@ fun CollapsedDayForecast(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Column(
-                modifier = Modifier
-                    .weight(0.2f)
-                    .padding(4.dp),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.Start
-            ) {
-                Text(
-                    text = dayInfo.date.second, //date
-                    style = typography.body1.copy(
-                        color = Color.White
-                    )
-                )
-                Text(
-                    text = dayInfo.date.first, // week day
-                    style = typography.body2.copy(
-                        color = SecondaryText
-                    )
-                )
-            }
+            DateAndWeekDay(
+                datePair = dayInfo.date,
+                modifier = Modifier.weight(0.2f)
+            )
             AsyncImage(
                 model = "https:" + dayInfo.icon,
                 contentDescription = "Weather Icon",
                 modifier = Modifier.size(40.dp),
             )
-            Row(
+            Temperature(
+                avgtempC = dayInfo.avgtempC,
                 modifier = Modifier
                     .weight(0.11f)
                     .padding(end = 4.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = "${dayInfo.avgtempC}°",
-                    style = typography.subtitle1.copy(
-                        color = Color.White,
-                        platformStyle = PlatformTextStyle(
-                            includeFontPadding = false
-                        )
-                    ),
-
-                    )
-            }
-            Column(
-                modifier = Modifier.weight(0.341f),
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Text(
-                        text = dayInfo.text,
-                        modifier = Modifier.padding(bottom = 4.dp),
-                        textAlign = TextAlign.Center,
-                        style = typography.body1.copy(
-                            color = DescriptionText
-                        )
-                    )
-                }
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    Text(
-                        text = "${dayInfo.maxwindKph} km/h",
-                        style = typography.caption.copy(
-                            color = Color.White,
-                            platformStyle = PlatformTextStyle(
-                                includeFontPadding = false
-                            )
-                        )
-                    )
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.drop),
-                            contentDescription = "Humidity",
-                            tint = Color.White
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(
-                            text = "${dayInfo.avgHumidity}%",
-                            style = typography.caption.copy(
-                                color = Color.White,
-                                platformStyle = PlatformTextStyle(
-                                    includeFontPadding = false
-                                )
-                            )
-                        )
-                    }
-                }
-            }
-            Row(
+            )
+            DescriptionAndAdditionalInfo(
+                dayInfo = dayInfo,
+                modifier = Modifier.weight(0.341f)
+            )
+            ExpandIcon(
+                icon = Icons.Filled.KeyboardArrowDown,
                 modifier = Modifier
                     .weight(0.06f)
                     .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.End
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.KeyboardArrowDown,
-                    contentDescription = "Expand",
-                    tint = SecondaryText
-                )
-            }
+            )
         }
     }
 }
+
+@Composable
+fun ExpandIcon(
+    icon: ImageVector,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.End
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = "ExpandIcon",
+            tint = SecondaryText
+        )
+    }
+
+}
+
+@Composable
+fun DescriptionAndAdditionalInfo(
+    dayInfo: ForecastDay,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier,
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = dayInfo.text,
+                modifier = Modifier.padding(bottom = 4.dp),
+                textAlign = TextAlign.Center,
+                style = typography.body1.copy(
+                    color = DescriptionText
+                )
+            )
+        }
+        AdditionalInfo(dayInfo = dayInfo)
+    }
+}
+
+@Composable
+fun AdditionalInfo(
+    dayInfo: ForecastDay,
+    textStyle: TextStyle = typography.caption
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceEvenly
+    ) {
+        Text(
+            text = "${dayInfo.maxwindKph} km/h",
+            style = textStyle.copy(
+                color = Color.LightGray,
+                platformStyle = PlatformTextStyle(
+                    includeFontPadding = false
+                )
+            )
+        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.drop),
+                contentDescription = "Humidity",
+                tint = Color.White
+            )
+            Spacer(modifier = Modifier.width(4.dp))
+            Text(
+                text = "${dayInfo.avgHumidity}%",
+                style = textStyle.copy(
+                    color = Color.LightGray,
+                    platformStyle = PlatformTextStyle(
+                        includeFontPadding = false
+                    )
+                )
+            )
+        }
+    }
+}
+
+
+@Composable
+fun DateAndWeekDay(
+    datePair: Pair<String, String>,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.Start
+    ) {
+        Text(
+            text = datePair.second, //date
+            style = typography.body1.copy(
+                color = Color.White
+            )
+        )
+        Text(
+            text = datePair.first, // week day
+            style = typography.body2.copy(
+                color = SecondaryText
+            )
+        )
+    }
+}
+
+@Composable
+fun Temperature(
+    avgtempC: Int,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = "${avgtempC}°",
+            style = typography.subtitle1.copy(
+                color = Color.White,
+                platformStyle = PlatformTextStyle(
+                    includeFontPadding = false
+                )
+            ),
+
+            )
+    }
+}
+
 
 @Composable
 fun ExpandedDayForecast() {
