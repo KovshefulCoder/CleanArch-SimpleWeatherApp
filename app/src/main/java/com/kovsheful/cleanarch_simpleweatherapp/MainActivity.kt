@@ -22,7 +22,6 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.i("BlaBlaBla", "onCreate")
         setContent {
             CleanArch_SimpleWeatherAppTheme {
                 // A surface container using the 'background' color from the theme
@@ -30,7 +29,6 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = Background
                 ) {
-                    Log.i("BlaBlaBla", "ForecastView launch")
                     ForecastView()
                 }
             }

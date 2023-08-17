@@ -30,7 +30,6 @@ class ForecastViewModel @Inject constructor (
     val event = _eventFlow.asSharedFlow()
 
     init {
-        Log.i("ForecastViewModel", "init getRemoteForecast()")
         getRemoteForecast()
     }
     fun getRemoteForecast() {

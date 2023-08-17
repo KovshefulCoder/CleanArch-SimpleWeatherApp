@@ -6,14 +6,14 @@ import retrofit2.http.Query
 
 interface ForecastAPI {
     @GET("forecast.json")
-    fun getWeatherForecast(
+    suspend fun getWeatherForecast(
         @Query("q") location: String,
         @Query("days") days: Int,
         @Query("key") apiKey: String
     ): ForecastDto
 
     companion object {
-        const val BASE_API = "https://api.weatherapi.com/v1/forecast.json"
+        const val BASE_API = "https://api.weatherapi.com/v1/"
     }
 }
 

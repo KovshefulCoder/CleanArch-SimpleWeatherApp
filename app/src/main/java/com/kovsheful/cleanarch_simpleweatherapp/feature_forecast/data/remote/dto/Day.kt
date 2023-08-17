@@ -2,6 +2,7 @@ package com.kovsheful.cleanarch_simpleweatherapp.feature_forecast.data.remote.dt
 
 import com.kovsheful.cleanarch_simpleweatherapp.feature_forecast.domain.models.ForecastDay
 import java.time.LocalDateTime
+import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.*
 
@@ -9,7 +10,7 @@ data class Day(
     val avghumidity: Int,
     val avgtemp_c: Double,
     val avgtemp_f: Double,
-    val avgvis_km: Int,
+    val avgvis_km: Double,
     val avgvis_miles: Int,
     val condition: Condition,
     val daily_chance_of_rain: Int,
@@ -22,13 +23,13 @@ data class Day(
     val maxwind_mph: Double,
     val mintemp_c: Double,
     val mintemp_f: Double,
-    val totalprecip_in: Int,
-    val totalprecip_mm: Int,
+    val totalprecip_in: Double,
+    val totalprecip_mm: Double,
     val uv: Int
 ) {
     fun toForecastDay(date: String) : ForecastDay {
-        val inputFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.ENGLISH)
-        val dateTime = LocalDateTime.parse(date, inputFormat)
+        val inputFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ENGLISH)
+        val dateTime = LocalDate.parse(date, inputFormat)
         val outputFormat = DateTimeFormatter.ofPattern("EEEE, MMMM dd", Locale.ENGLISH)
         val output = Pair(
             dateTime.format(outputFormat).split(",").first(),
