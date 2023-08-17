@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">CleanArch_SimpleWeatherApp</string>
+    <string name="topbar_title">Forecast in Saint Petersburg</string>
+    <string name="update_forecast_button_text">Update forecast</string>
+    <string name="date_expanded_title">Date</string>
+    <string name="status_expanded_title">Status</string>
+    <string name="temperature_expanded_title">Temperature</string>
+    <string name="description_expanded_title">Description</string>
+    <string name="wind_expanded_title">Wind</string>
+    <string name="humidity_expanded_title">Humidity</string>
+    <string name="wind_metric">" km/h"</string>
 </resources>
