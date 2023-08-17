@@ -1,5 +1,8 @@
 package com.kovsheful.cleanarch_simpleweatherapp.feature_forecast.data.remote.dto
 
+import android.os.Build
+import android.util.Log
+import androidx.annotation.RequiresApi
 import com.kovsheful.cleanarch_simpleweatherapp.feature_forecast.domain.models.ForecastDay
 import java.time.LocalDateTime
 import java.time.LocalDate
@@ -28,15 +31,18 @@ data class Day(
     val uv: Int
 ) {
     fun toForecastDay(date: String) : ForecastDay {
+        fun formatDate(weekDayWithData: List<String>): Pair<String, String> {
+            val dateOfYear = weekDayWithData[1].trim().split(" ")
+            val formattedDate = dateOfYear[0] + " " + dateOfYear[1].take(3)
+            return Pair(weekDayWithData[0], formattedDate)
+        }
         val inputFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ENGLISH)
         val dateTime = LocalDate.parse(date, inputFormat)
-        val outputFormat = DateTimeFormatter.ofPattern("EEEE, MMMM dd", Locale.ENGLISH)
-        val output = Pair(
-            dateTime.format(outputFormat).split(",").first(),
-            dateTime.format(outputFormat).split(",").last()
-        )
+        val outputFormat = DateTimeFormatter.ofPattern("EEEE, dd MMMM", Locale.ENGLISH)
+        val weekDayWithData = dateTime.format(outputFormat).split(",")
+        val datePair: Pair<String, String> = formatDate(weekDayWithData)
         return ForecastDay(
-            date = output,
+            date = datePair,
             text = condition.text,
             icon = condition.icon,
             avgtempC = avgtemp_c.toInt(),

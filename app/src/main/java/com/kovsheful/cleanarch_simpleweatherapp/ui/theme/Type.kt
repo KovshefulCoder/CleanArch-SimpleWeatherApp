@@ -51,6 +51,12 @@ val typography = Typography(
         fontSize = 18.sp,
         color = Black
     ),
+    body2 = TextStyle(
+        fontFamily = poppins,
+        fontWeight = FontWeight.Normal,
+        fontSize = 12.sp,
+        color = Black
+    ),
     caption = TextStyle(
         fontFamily = poppins,
         fontWeight = FontWeight.Normal,

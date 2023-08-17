@@ -28,14 +28,11 @@ class ForecastRepositoryImpl(
             ).forecast.forecastday.map {
                 it.day.toForecastDay(date = it.date)
             }
-            Log.i("ForecastRepositoryImpl", "RESULT getForecast: $forecast")
             emit(Resource.Success(data = forecast))
         } catch (e: HttpException) {
             emit(Resource.Error(e.code().toString()))
-            Log.i("ForecastRepositoryImpl", "RESULT getForecast: ${e.code()}")
         } catch (e: IOException) {
             emit(Resource.Error("Couldn`t reach server!"))
-            Log.i("ForecastRepositoryImpl", "RESULT getForecast: ${e.message}")
         }
     }
 }

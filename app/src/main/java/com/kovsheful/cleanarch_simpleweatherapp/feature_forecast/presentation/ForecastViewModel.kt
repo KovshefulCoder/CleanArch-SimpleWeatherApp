@@ -16,6 +16,8 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.forEach
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -38,8 +40,7 @@ class ForecastViewModel @Inject constructor (
         val apiKey: String = "bbeeb5bff806437b98f134134231408"
         viewModelScope.launch {
             getForecast(location, nDaysForForecast, apiKey)
-                .collect { result ->
-                    Log.i("ForecastViewModel", "RESULT getRemoteForecast: ${result.data}")
+                .onEach { result ->
                     when(result) {
                         is Resource.Success -> {
                             _state.value = state.value.copy(
@@ -63,7 +64,7 @@ class ForecastViewModel @Inject constructor (
                             )
                         }
                     }
-                }
+                }.launchIn(this)
         }
     }
 }

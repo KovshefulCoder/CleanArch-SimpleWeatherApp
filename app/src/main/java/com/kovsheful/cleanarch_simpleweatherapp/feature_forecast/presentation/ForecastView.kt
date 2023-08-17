@@ -1,35 +1,35 @@
 package com.kovsheful.cleanarch_simpleweatherapp.feature_forecast.presentation
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.background
+import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicText
+import androidx.compose.material.Scaffold
+import androidx.compose.material.TopAppBar
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.hilt.navigation.compose.hiltViewModel
-import com.kovsheful.cleanarch_simpleweatherapp.feature_forecast.domain.models.ForecastDay
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -37,26 +37,22 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import kotlinx.coroutines.flow.SharedFlow
-import androidx.compose.material.Scaffold
-import androidx.compose.material.TopAppBar
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.kovsheful.cleanarch_simpleweatherapp.ui.theme.PrimaryColor
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.kovsheful.cleanarch_simpleweatherapp.R
+import com.kovsheful.cleanarch_simpleweatherapp.feature_forecast.domain.models.ForecastDay
 import com.kovsheful.cleanarch_simpleweatherapp.ui.theme.DescriptionText
+import com.kovsheful.cleanarch_simpleweatherapp.ui.theme.PrimaryColor
 import com.kovsheful.cleanarch_simpleweatherapp.ui.theme.SecondaryText
-import com.kovsheful.cleanarch_simpleweatherapp.ui.theme.TopBarColor
 import com.kovsheful.cleanarch_simpleweatherapp.ui.theme.typography
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 
 
@@ -65,6 +61,7 @@ internal fun ForecastView() {
     val viewModel: ForecastViewModel = hiltViewModel()
     val state by viewModel.state.collectAsState()
     val flow = viewModel.event
+    Log.i("internal ForecastView", "State updated: loading - ${state.isLoading}, items - ${state.forecastItems}")
     PrivateForecastView(
         forecasts = state.forecastItems,
         flow = flow,
@@ -73,7 +70,7 @@ internal fun ForecastView() {
     )
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFF3B3D49)
+@Preview(backgroundColor = 0xFF3B3D49)
 @Composable
 fun PrevPrivateForecastView() {
     PrivateForecastView(
@@ -88,7 +85,7 @@ fun PrevPrivateForecastView() {
             )
         ),
         flow = MutableSharedFlow<Event>().asSharedFlow(),
-        isRemoteLoading = true,
+        isRemoteLoading = false,
         updateForecast = {}
     )
 }
@@ -103,7 +100,7 @@ private fun PrivateForecastView(
     updateForecast: () -> Unit
 ) {
     val snackBarHostState = remember { SnackbarHostState() }
-    val isLoading by remember { mutableStateOf(isRemoteLoading) }
+    Log.i("PrivateForecastView", "State updated: loading - $isRemoteLoading")
     LaunchedEffect(key1 = true) {
         flow.collect { event ->
             when (event) {
@@ -120,7 +117,7 @@ private fun PrivateForecastView(
             SnackbarHost(snackBarHostState)
         },
         topBar = {
-            if (!isLoading) {
+            if (!isRemoteLoading) {
                 TopAppBar(
                     backgroundColor = SecondaryText,
                 ) {
@@ -130,7 +127,7 @@ private fun PrivateForecastView(
                         color = Color.White
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    if (isLoading) {
+                    if (isRemoteLoading) {
                         CircularProgressIndicator()
                     } else {
                         AsyncImage(
@@ -147,9 +144,9 @@ private fun PrivateForecastView(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(8.dp)
-                .alpha(if (isLoading) 0.5f else 1f)
+                .alpha(if (isRemoteLoading) 0.5f else 1f)
         ) {
-            if (isLoading) {
+            if (isRemoteLoading) {
                 CircularProgressIndicator(
                     modifier = Modifier.align(Alignment.Center),
                     color = PrimaryColor,
@@ -200,7 +197,7 @@ fun CollapsedDayForecast(
     dayInfo: ForecastDay = ForecastDay(
         date = Pair("Sunday", "22 Aug"),
         text = "Sunny",
-        icon = "//cdn.weatherapi.com/weather/64x64/day/113.png",
+        icon = "https://cdn.weatherapi.com/weather/64x64/day/113.png",
         avgtempC = 30,
         maxwindKph = 10,
         avgHumidity = 50
@@ -211,7 +208,7 @@ fun CollapsedDayForecast(
         onClick = onExpand,
         modifier = Modifier,
         shape = RoundedCornerShape(25),
-        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp),
+        contentPadding = PaddingValues(horizontal = 2.dp, vertical = 4.dp),
         colors = ButtonDefaults.buttonColors(containerColor = PrimaryColor),
     )
     {
@@ -223,42 +220,49 @@ fun CollapsedDayForecast(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Column(
-                modifier = Modifier.weight(0.17f),
+                modifier = Modifier.weight(0.2f).padding(4.dp),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.Start
             ) {
                 Text(
-                    text = dayInfo.date.second,
-                    modifier = Modifier.padding(bottom = 4.dp),
-                    style = typography.subtitle2.copy(
+                    text = dayInfo.date.second, //date
+                    style = typography.body1.copy(
                         color = Color.White
                     )
                 )
                 Text(
-                    text = dayInfo.date.first,
-                    style = typography.body1.copy(
+                    text = dayInfo.date.first, // week day
+                    style = typography.body2.copy(
                         color = SecondaryText
                     )
                 )
             }
-//            AsyncImage(
-//                model = dayInfo.icon,
+            AsyncImage(
+                model = "https:" + dayInfo.icon,
+                contentDescription = "Weather Icon",
+                modifier = Modifier.size(40.dp),
+            )
+//            Image(
+//                painter = painterResource(id = R.drawable.placeholder_image),
 //                contentDescription = "Weather Icon",
-//                modifier = Modifier.weight(0.164f),
+//                modifier = Modifier.size(64.dp),
 //            )
             Row(
-                modifier = Modifier.weight(0.164f),
+                modifier = Modifier.weight(0.11f).padding(end = 4.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
                 Text(
                     text = "${dayInfo.avgtempC}°",
-                    style = typography.h4.copy(
-                        color = Color.White
+                    style = typography.subtitle1.copy(
+                        color = Color.White,
+                        platformStyle = PlatformTextStyle(
+                            includeFontPadding = false
+                        )
                     ),
+
                 )
             }
-
             Column(
                 modifier = Modifier.weight(0.341f),
             ) {
@@ -270,7 +274,8 @@ fun CollapsedDayForecast(
                     Text(
                         text = dayInfo.text,
                         modifier = Modifier.padding(bottom = 4.dp),
-                        style = typography.subtitle2.copy(
+                        textAlign = TextAlign.Center,
+                        style = typography.body1.copy(
                             color = DescriptionText
                         )
                     )
@@ -305,7 +310,9 @@ fun CollapsedDayForecast(
                 }
             }
             Row(
-                modifier = Modifier.weight(0.102f),
+                modifier = Modifier
+                    .weight(0.06f)
+                    .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.End
             ) {
