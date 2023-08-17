@@ -13,6 +13,10 @@ val poppins = FontFamily(
     Font(R.font.poppins_regular, FontWeight.Normal),
 )
 
+val poppinsLightItalic = FontFamily(
+    Font(R.font.poppins_lightitalic, FontWeight.ExtraLight),
+)
+
 // Set of Material typography styles to start with
 val typography = Typography(
     body1 = TextStyle(
