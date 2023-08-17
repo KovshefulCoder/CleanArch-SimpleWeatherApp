@@ -31,16 +31,11 @@ data class Day(
     val uv: Int
 ) {
     fun toForecastDay(date: String) : ForecastDay {
-        fun formatDate(weekDayWithData: List<String>): Pair<String, String> {
-            val dateOfYear = weekDayWithData[1].trim().split(" ")
-            val formattedDate = dateOfYear[0] + " " + dateOfYear[1].take(3)
-            return Pair(weekDayWithData[0], formattedDate)
-        }
         val inputFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ENGLISH)
         val dateTime = LocalDate.parse(date, inputFormat)
         val outputFormat = DateTimeFormatter.ofPattern("EEEE, dd MMMM", Locale.ENGLISH)
         val weekDayWithData = dateTime.format(outputFormat).split(",")
-        val datePair: Pair<String, String> = formatDate(weekDayWithData)
+        val datePair: Pair<String, String> = Pair(weekDayWithData[0], weekDayWithData[1])
         return ForecastDay(
             date = datePair,
             text = condition.text,

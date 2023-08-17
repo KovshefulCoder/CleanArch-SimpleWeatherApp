@@ -1,8 +1,8 @@
 package com.kovsheful.cleanarch_simpleweatherapp.feature_forecast.presentation
 
 import android.annotation.SuppressLint
-import android.util.Log
-import androidx.compose.foundation.background
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,6 +21,7 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -38,12 +39,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.PlatformTextStyle
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.compose.composable
 import coil.compose.AsyncImage
 import com.kovsheful.cleanarch_simpleweatherapp.R
 import com.kovsheful.cleanarch_simpleweatherapp.feature_forecast.domain.models.ForecastDay
@@ -51,10 +58,15 @@ import com.kovsheful.cleanarch_simpleweatherapp.ui.theme.Background
 import com.kovsheful.cleanarch_simpleweatherapp.ui.theme.DescriptionText
 import com.kovsheful.cleanarch_simpleweatherapp.ui.theme.PrimaryColor
 import com.kovsheful.cleanarch_simpleweatherapp.ui.theme.SecondaryText
+import com.kovsheful.cleanarch_simpleweatherapp.ui.theme.poppinsLightItalic
 import com.kovsheful.cleanarch_simpleweatherapp.ui.theme.typography
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
+
+fun NavGraphBuilder.forecastScreen() {
+    composable(route = "ForecastList") {
+        ForecastView()
+    }
+}
 
 
 @Composable
@@ -62,107 +74,11 @@ internal fun ForecastView() {
     val viewModel: ForecastViewModel = hiltViewModel()
     val state by viewModel.state.collectAsState()
     val flow = viewModel.event
-    Log.i(
-        "internal ForecastView",
-        "State updated: loading - ${state.isLoading}, items - ${state.forecastItems}"
-    )
     PrivateForecastView(
         forecasts = state.forecastItems,
         flow = flow,
         isRemoteLoading = state.isLoading,
         updateForecast = { viewModel.getRemoteForecast() }
-    )
-}
-
-@Preview(backgroundColor = 0xFF3B3D49)
-@Composable
-fun PrevPrivateForecastView() {
-    PrivateForecastView(
-        forecasts = listOf(
-            ForecastDay(
-                date = Pair("Sunday", "22 Aug"),
-                text = "Sunny",
-                icon = "//cdn.weatherapi.com/weather/64x64/day/113.png",
-                avgtempC = 30,
-                maxwindKph = 10,
-                avgHumidity = 50
-            ),
-            ForecastDay(
-                date = Pair("Monday", "23 Aug"),
-                text = "Sunny",
-                icon = "//cdn.weatherapi.com/weather/64x64/day/113.png",
-                avgtempC = 30,
-                maxwindKph = 10,
-                avgHumidity = 50
-            ),
-            ForecastDay(
-                date = Pair("Tuesday", "24 Aug"),
-                text = "Sunny",
-                icon = "//cdn.weatherapi.com/weather/64x64/day/113.png",
-                avgtempC = 30,
-                maxwindKph = 10,
-                avgHumidity = 50
-            ),
-            ForecastDay(
-                date = Pair("Wednesday", "25 Aug"),
-                text = "Sunny",
-                icon = "//cdn.weatherapi.com/weather/64x64/day/113.png",
-                avgtempC = 30,
-                maxwindKph = 10,
-                avgHumidity = 50
-            ),
-            ForecastDay(
-                date = Pair("Thursday", "26 Aug"),
-                text = "Sunny",
-                icon = "//cdn.weatherapi.com/weather/64x64/day/113.png",
-                avgtempC = 30,
-                maxwindKph = 10,
-                avgHumidity = 50
-            ),
-            ForecastDay(
-                date = Pair("Friday", "27 Aug"),
-                text = "Sunny",
-                icon = "//cdn.weatherapi.com/weather/64x64/day/113.png",
-                avgtempC = 30,
-                maxwindKph = 10,
-                avgHumidity = 50
-            ),
-            ForecastDay(
-                date = Pair("Saturday", "28 Aug"),
-                text = "Sunny",
-                icon = "//cdn.weatherapi.com/weather/64x64/day/113.png",
-                avgtempC = 30,
-                maxwindKph = 10,
-                avgHumidity = 50
-            ),
-            ForecastDay(
-                date = Pair("Sunday", "29 Aug"),
-                text = "Sunny",
-                icon = "//cdn.weatherapi.com/weather/64x64/day/113.png",
-                avgtempC = 30,
-                maxwindKph = 10,
-                avgHumidity = 50
-            ),
-            ForecastDay(
-                date = Pair("Monday", "30 Aug"),
-                text = "Sunny",
-                icon = "//cdn.weatherapi.com/weather/64x64/day/113.png",
-                avgtempC = 30,
-                maxwindKph = 10,
-                avgHumidity = 50
-            ),
-            ForecastDay(
-                date = Pair("Tuesday", "31 Aug"),
-                text = "Sunny",
-                icon = "//cdn.weatherapi.com/weather/64x64/day/113.png",
-                avgtempC = 31,
-                maxwindKph = 10,
-                avgHumidity = 50
-            )
-        ),
-        flow = MutableSharedFlow<Event>().asSharedFlow(),
-        isRemoteLoading = false,
-        updateForecast = {}
     )
 }
 
@@ -176,7 +92,6 @@ private fun PrivateForecastView(
     updateForecast: () -> Unit
 ) {
     val snackBarHostState = remember { SnackbarHostState() }
-    Log.i("PrivateForecastView", "State updated: loading - $isRemoteLoading")
     LaunchedEffect(key1 = true) {
         flow.collect { event ->
             when (event) {
@@ -194,25 +109,25 @@ private fun PrivateForecastView(
             SnackbarHost(snackBarHostState)
         },
         topBar = {
-            if (!isRemoteLoading) {
-                TopAppBar(
-                    backgroundColor = Background,
-                ) {
-                    Text(
-                        text = "Forecast in Saint Petersburg",
-                        style = typography.h6,
+            TopAppBar(
+                backgroundColor = Background,
+            ) {
+                Text(
+                    text = stringResource(R.string.topbar_title),
+                    style = typography.h6,
+                    color = Color.White
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                if (isRemoteLoading) {
+                    CircularProgressIndicator(
                         color = Color.White
                     )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    if (isRemoteLoading) {
-                        CircularProgressIndicator()
-                    } else {
-                        AsyncImage(
-                            model = "https://" + forecasts[0].icon,
-                            contentDescription = "Weather Icon",
-                            modifier = Modifier.weight(0.164f),
-                        )
-                    }
+                } else {
+                    AsyncImage(
+                        model = "https://" + forecasts[0].icon,
+                        contentDescription = "Weather Icon",
+                        modifier = Modifier.weight(0.164f),
+                    )
                 }
             }
         }
@@ -240,15 +155,26 @@ private fun PrivateForecastView(
                         verticalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         itemsIndexed(forecasts) { index, day ->
-                            if (index == pickedDay.value) {
-                                //ExpandedDayForecast()
-                            } else {
-                                CollapsedDayForecast(
-                                    dayInfo = day,
-                                    onExpand = {
-                                        pickedDay.value = index
-                                    }
+                            Box(
+                                modifier = Modifier.animateContentSize(
+                                    animationSpec = tween(300)
                                 )
+                            ) {
+                                if (index == pickedDay.value) {
+                                    ExpandedDayForecast(
+                                        dayInfo = day,
+                                        onExpand = {
+                                            pickedDay.value = -1
+                                        }
+                                    )
+                                } else {
+                                    CollapsedDayForecast(
+                                        dayInfo = day,
+                                        onExpand = {
+                                            pickedDay.value = index
+                                        }
+                                    )
+                                }
                             }
                         }
                     }
@@ -266,7 +192,7 @@ private fun PrivateForecastView(
                 shape = RoundedCornerShape(25)
             ) {
                 Text(
-                    text = "Update forecast",
+                    text = stringResource(R.string.update_forecast_button_text),
                     style = typography.h4.copy(
                         color = Background,
                     ),
@@ -281,7 +207,7 @@ private fun PrivateForecastView(
 @Composable
 fun CollapsedDayForecast(
     dayInfo: ForecastDay = ForecastDay(
-        date = Pair("Sunday", "22 Aug"),
+        date = Pair("Sunday", "22 August"),
         text = "Sunny",
         icon = "https://cdn.weatherapi.com/weather/64x64/day/113.png",
         avgtempC = 30,
@@ -290,6 +216,16 @@ fun CollapsedDayForecast(
     ),
     onExpand: () -> Unit = {},
 ) {
+    fun formatDate(date: Pair<String, String>): Pair<String, String> {
+        val dateOfYear = date.second.trim().split(" ")
+        val formattedDate = dateOfYear[0] + " " +
+                if (dateOfYear[1] == "June" || dateOfYear[1] == "July") {
+                    dateOfYear[1]
+                } else {
+                    dateOfYear[1].take(3)
+                }
+        return Pair(date.first, formattedDate)
+    }
     Button(
         onClick = onExpand,
         modifier = Modifier,
@@ -305,113 +241,126 @@ fun CollapsedDayForecast(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Column(
-                modifier = Modifier
-                    .weight(0.2f)
-                    .padding(4.dp),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.Start
-            ) {
-                Text(
-                    text = dayInfo.date.second, //date
-                    style = typography.body1.copy(
-                        color = Color.White
-                    )
-                )
-                Text(
-                    text = dayInfo.date.first, // week day
-                    style = typography.body2.copy(
-                        color = SecondaryText
-                    )
-                )
-            }
+            DateAndWeekDay(
+                datePair = formatDate(dayInfo.date),
+                modifier = Modifier.weight(0.2f)
+            )
             AsyncImage(
                 model = "https:" + dayInfo.icon,
                 contentDescription = "Weather Icon",
                 modifier = Modifier.size(40.dp),
             )
-            Row(
+            Temperature(
+                avgtempC = dayInfo.avgtempC,
                 modifier = Modifier
                     .weight(0.11f)
                     .padding(end = 4.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = "${dayInfo.avgtempC}°",
-                    style = typography.subtitle1.copy(
-                        color = Color.White,
-                        platformStyle = PlatformTextStyle(
-                            includeFontPadding = false
-                        )
-                    ),
+            )
+            DescriptionAndAdditionalInfo(
+                dayInfo = dayInfo,
+                modifier = Modifier.weight(0.341f)
+            )
+            ExpandIcon(
+                icon = Icons.Filled.KeyboardArrowDown,
+                modifier = Modifier
+                    .weight(0.06f)
+                    .fillMaxWidth(),
+            )
+        }
+    }
+}
 
-                    )
-            }
+@Preview(showBackground = true, backgroundColor = 0xFF3B3D49)
+@Composable
+fun ExpandedDayForecast(
+    dayInfo: ForecastDay = ForecastDay(
+        date = Pair("Sunday", "22 August"),
+        text = "Sunny",
+        icon = "https://cdn.weatherapi.com/weather/64x64/day/113.png",
+        avgtempC = 30,
+        maxwindKph = 10,
+        avgHumidity = 50
+    ),
+    onExpand: () -> Unit = {},
+) {
+    Button(
+        onClick = onExpand,
+        modifier = Modifier,
+        shape = RoundedCornerShape(15),
+        contentPadding = PaddingValues(horizontal = 4.dp, vertical = 8.dp),
+        colors = ButtonDefaults.buttonColors(containerColor = PrimaryColor),
+    )
+    {
+        Row(
+            horizontalArrangement = Arrangement.Start,
+            verticalAlignment = Alignment.CenterVertically,
+        )
+        {
             Column(
-                modifier = Modifier.weight(0.341f),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.weight(0.94f)
             ) {
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Text(
-                        text = dayInfo.text,
-                        modifier = Modifier.padding(bottom = 4.dp),
-                        textAlign = TextAlign.Center,
-                        style = typography.body1.copy(
-                            color = DescriptionText
-                        )
-                    )
-                }
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .padding(horizontal = 8.dp, vertical = 8.dp)
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.Top,
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    Text(
-                        text = "${dayInfo.maxwindKph} km/h",
-                        style = typography.caption.copy(
-                            color = Color.White,
-                            platformStyle = PlatformTextStyle(
-                                includeFontPadding = false
-                            )
+                    ExpandedItem(title = stringResource(R.string.date_expanded_title)) {
+                        DateAndWeekDay(
+                            datePair = dayInfo.date,
+                            horizontalAlignment = Alignment.CenterHorizontally,
                         )
-                    )
+                    }
+                    ExpandedItem(title = stringResource(R.string.status_expanded_title)) {
+                        AsyncImage(
+                            model = "https:" + dayInfo.icon,
+                            contentDescription = "Weather Icon",
+                            modifier = Modifier.size(40.dp),
+                        )
+                    }
+                    ExpandedItem(title = stringResource(R.string.temperature_expanded_title)) {
+                        Temperature(
+                            avgtempC = dayInfo.avgtempC,
+                        )
+                    }
+                }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp, vertical = 8.dp),
+                    verticalAlignment = Alignment.Top,
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
                     Row(
-                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.weight(0.5f),
                         horizontalArrangement = Arrangement.Center
                     ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.drop),
-                            contentDescription = "Humidity",
-                            tint = Color.White
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(
-                            text = "${dayInfo.avgHumidity}%",
-                            style = typography.caption.copy(
-                                color = Color.White,
-                                platformStyle = PlatformTextStyle(
-                                    includeFontPadding = false
-                                )
-                            )
-                        )
+                        ExpandedItem(title = stringResource(R.string.description_expanded_title)) {
+                            Description(text = dayInfo.text)
+                        }
+                    }
+                    Row(
+                        modifier = Modifier.weight(0.5f),
+                        horizontalArrangement = Arrangement.SpaceEvenly
+                    ) {
+                        ExpandedItem(title = stringResource(R.string.wind_expanded_title)) {
+                            Wind(speed = dayInfo.maxwindKph, textStyle = typography.body2)
+                        }
+                        ExpandedItem(title = stringResource(R.string.humidity_expanded_title)) {
+                            Humidity(percent = dayInfo.avgHumidity, textStyle = typography.body2)
+                        }
                     }
                 }
             }
             Row(
-                modifier = Modifier
-                    .weight(0.06f)
-                    .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.End
+                horizontalArrangement = Arrangement.Start,
+                modifier = Modifier.weight(0.1f)
             ) {
-                Icon(
-                    imageVector = Icons.Filled.KeyboardArrowDown,
-                    contentDescription = "Expand",
-                    tint = SecondaryText
+                ExpandIcon(
+                    icon = Icons.Filled.KeyboardArrowUp,
                 )
             }
         }
@@ -419,8 +368,184 @@ fun CollapsedDayForecast(
 }
 
 @Composable
-fun ExpandedDayForecast() {
+fun ExpandedItem(
+    title: String,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit
+) {
+    Column(
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
+    ) {
+        Text(
+            text = "$title:",
+            style = typography.body1.copy(
+                color = Color.White,
+                fontFamily = poppinsLightItalic,
+                fontWeight = FontWeight.ExtraLight,
+                platformStyle = PlatformTextStyle(
+                    includeFontPadding = false
+                )
+            ),
+            color = Color.White
+        )
+        content()
+    }
+}
+
+@Composable
+fun ExpandIcon(
+    icon: ImageVector,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.End
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = "ExpandIcon",
+            tint = SecondaryText
+        )
+    }
 
 }
+
+@Composable
+fun DescriptionAndAdditionalInfo(
+    dayInfo: ForecastDay,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier,
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Description(text = dayInfo.text)
+        }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            Wind(speed = dayInfo.maxwindKph, textStyle = typography.caption)
+            Humidity(percent = dayInfo.avgHumidity, textStyle = typography.caption)
+        }
+    }
+}
+
+@Composable
+fun Description(
+    text: String
+) {
+    Text(
+        text = text,
+        modifier = Modifier.padding(bottom = 4.dp),
+        textAlign = TextAlign.Center,
+        style = typography.body1.copy(
+            color = DescriptionText
+        ),
+        maxLines = 2
+    )
+}
+
+@Composable
+fun Wind(
+    speed: Int,
+    textStyle: TextStyle = typography.caption
+) {
+    Text(
+        text = "$speed " + stringResource(R.string.wind_metric),
+        style = textStyle.copy(
+            color = Color.LightGray,
+            platformStyle = PlatformTextStyle(
+                includeFontPadding = false
+            )
+        )
+    )
+}
+
+@Composable
+fun Humidity(
+    percent: Int,
+    textStyle: TextStyle = typography.caption
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+    ) {
+        Icon(
+            painter = painterResource(id = R.drawable.drop),
+            contentDescription = "Humidity",
+            tint = Color.White
+        )
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(
+            text = "$percent%",
+            style = textStyle.copy(
+                color = Color.LightGray,
+                platformStyle = PlatformTextStyle(
+                    includeFontPadding = false
+                )
+            )
+        )
+    }
+}
+
+
+@Composable
+fun DateAndWeekDay(
+    datePair: Pair<String, String>,
+    modifier: Modifier = Modifier,
+    horizontalAlignment: Alignment.Horizontal = Alignment.Start
+) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = horizontalAlignment
+    ) {
+        Text(
+            text = datePair.second, //date
+            style = typography.body1.copy(
+                color = Color.White
+            )
+        )
+        Text(
+            text = datePair.first, // week day
+            style = typography.body2.copy(
+                color = SecondaryText
+            )
+        )
+    }
+}
+
+@Composable
+fun Temperature(
+    avgtempC: Int,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = "${avgtempC}°",
+            style = typography.subtitle1.copy(
+                color = Color.White,
+                platformStyle = PlatformTextStyle(
+                    includeFontPadding = false
+                )
+            ),
+
+            )
+    }
+}
+
 
 
