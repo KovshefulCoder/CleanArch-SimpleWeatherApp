@@ -2,7 +2,7 @@ package com.kovsheful.cleanarch_simpleweatherapp.feature_forecast.presentation
 
 import android.annotation.SuppressLint
 import android.util.Log
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -47,6 +47,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.kovsheful.cleanarch_simpleweatherapp.R
 import com.kovsheful.cleanarch_simpleweatherapp.feature_forecast.domain.models.ForecastDay
+import com.kovsheful.cleanarch_simpleweatherapp.ui.theme.Background
 import com.kovsheful.cleanarch_simpleweatherapp.ui.theme.DescriptionText
 import com.kovsheful.cleanarch_simpleweatherapp.ui.theme.PrimaryColor
 import com.kovsheful.cleanarch_simpleweatherapp.ui.theme.SecondaryText
@@ -61,7 +62,10 @@ internal fun ForecastView() {
     val viewModel: ForecastViewModel = hiltViewModel()
     val state by viewModel.state.collectAsState()
     val flow = viewModel.event
-    Log.i("internal ForecastView", "State updated: loading - ${state.isLoading}, items - ${state.forecastItems}")
+    Log.i(
+        "internal ForecastView",
+        "State updated: loading - ${state.isLoading}, items - ${state.forecastItems}"
+    )
     PrivateForecastView(
         forecasts = state.forecastItems,
         flow = flow,
@@ -80,6 +84,78 @@ fun PrevPrivateForecastView() {
                 text = "Sunny",
                 icon = "//cdn.weatherapi.com/weather/64x64/day/113.png",
                 avgtempC = 30,
+                maxwindKph = 10,
+                avgHumidity = 50
+            ),
+            ForecastDay(
+                date = Pair("Monday", "23 Aug"),
+                text = "Sunny",
+                icon = "//cdn.weatherapi.com/weather/64x64/day/113.png",
+                avgtempC = 30,
+                maxwindKph = 10,
+                avgHumidity = 50
+            ),
+            ForecastDay(
+                date = Pair("Tuesday", "24 Aug"),
+                text = "Sunny",
+                icon = "//cdn.weatherapi.com/weather/64x64/day/113.png",
+                avgtempC = 30,
+                maxwindKph = 10,
+                avgHumidity = 50
+            ),
+            ForecastDay(
+                date = Pair("Wednesday", "25 Aug"),
+                text = "Sunny",
+                icon = "//cdn.weatherapi.com/weather/64x64/day/113.png",
+                avgtempC = 30,
+                maxwindKph = 10,
+                avgHumidity = 50
+            ),
+            ForecastDay(
+                date = Pair("Thursday", "26 Aug"),
+                text = "Sunny",
+                icon = "//cdn.weatherapi.com/weather/64x64/day/113.png",
+                avgtempC = 30,
+                maxwindKph = 10,
+                avgHumidity = 50
+            ),
+            ForecastDay(
+                date = Pair("Friday", "27 Aug"),
+                text = "Sunny",
+                icon = "//cdn.weatherapi.com/weather/64x64/day/113.png",
+                avgtempC = 30,
+                maxwindKph = 10,
+                avgHumidity = 50
+            ),
+            ForecastDay(
+                date = Pair("Saturday", "28 Aug"),
+                text = "Sunny",
+                icon = "//cdn.weatherapi.com/weather/64x64/day/113.png",
+                avgtempC = 30,
+                maxwindKph = 10,
+                avgHumidity = 50
+            ),
+            ForecastDay(
+                date = Pair("Sunday", "29 Aug"),
+                text = "Sunny",
+                icon = "//cdn.weatherapi.com/weather/64x64/day/113.png",
+                avgtempC = 30,
+                maxwindKph = 10,
+                avgHumidity = 50
+            ),
+            ForecastDay(
+                date = Pair("Monday", "30 Aug"),
+                text = "Sunny",
+                icon = "//cdn.weatherapi.com/weather/64x64/day/113.png",
+                avgtempC = 30,
+                maxwindKph = 10,
+                avgHumidity = 50
+            ),
+            ForecastDay(
+                date = Pair("Tuesday", "31 Aug"),
+                text = "Sunny",
+                icon = "//cdn.weatherapi.com/weather/64x64/day/113.png",
+                avgtempC = 31,
                 maxwindKph = 10,
                 avgHumidity = 50
             )
@@ -113,13 +189,14 @@ private fun PrivateForecastView(
         }
     }
     Scaffold(
+        backgroundColor = Background,
         snackbarHost = {
             SnackbarHost(snackBarHostState)
         },
         topBar = {
             if (!isRemoteLoading) {
                 TopAppBar(
-                    backgroundColor = SecondaryText,
+                    backgroundColor = Background,
                 ) {
                     Text(
                         text = "Forecast in Saint Petersburg",
@@ -131,7 +208,7 @@ private fun PrivateForecastView(
                         CircularProgressIndicator()
                     } else {
                         AsyncImage(
-                            model = forecasts[0].icon,
+                            model = "https://" + forecasts[0].icon,
                             contentDescription = "Weather Icon",
                             modifier = Modifier.weight(0.164f),
                         )
@@ -146,46 +223,55 @@ private fun PrivateForecastView(
                 .padding(8.dp)
                 .alpha(if (isRemoteLoading) 0.5f else 1f)
         ) {
+            val pickedDay = remember { mutableStateOf(-1) }
             if (isRemoteLoading) {
                 CircularProgressIndicator(
                     modifier = Modifier.align(Alignment.Center),
-                    color = PrimaryColor,
+                    color = Color.White,
                 )
             } else {
-                val pickedDay by remember { mutableStateOf(-1) }
                 Column(
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    LazyColumn() {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
                         itemsIndexed(forecasts) { index, day ->
-                            if (index == pickedDay) {
+                            if (index == pickedDay.value) {
                                 //ExpandedDayForecast()
                             } else {
                                 CollapsedDayForecast(
                                     dayInfo = day,
-                                    onExpand = { /*TODO*/ }
+                                    onExpand = {
+                                        pickedDay.value = index
+                                    }
                                 )
                             }
                         }
                     }
                 }
-                Button(
-                    onClick = updateForecast,
-                    modifier = Modifier.align(Alignment.BottomCenter),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = DescriptionText
+            }
+            Button(
+                onClick = {
+                    pickedDay.value = -1
+                    updateForecast()
+                },
+                modifier = Modifier.align(Alignment.BottomCenter),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = DescriptionText
+                ),
+                shape = RoundedCornerShape(25)
+            ) {
+                Text(
+                    text = "Update forecast",
+                    style = typography.h4.copy(
+                        color = Background,
                     ),
-                    shape = RoundedCornerShape(25)
-                ) {
-                    Text(
-                        text = "Update forecast",
-                        style = typography.h2.copy(
-                            color = Color.Black,
-                        ),
-                        textAlign = TextAlign.Center
-                    )
-                }
+                    textAlign = TextAlign.Center
+                )
             }
         }
     }
@@ -220,7 +306,9 @@ fun CollapsedDayForecast(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Column(
-                modifier = Modifier.weight(0.2f).padding(4.dp),
+                modifier = Modifier
+                    .weight(0.2f)
+                    .padding(4.dp),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.Start
             ) {
@@ -242,13 +330,10 @@ fun CollapsedDayForecast(
                 contentDescription = "Weather Icon",
                 modifier = Modifier.size(40.dp),
             )
-//            Image(
-//                painter = painterResource(id = R.drawable.placeholder_image),
-//                contentDescription = "Weather Icon",
-//                modifier = Modifier.size(64.dp),
-//            )
             Row(
-                modifier = Modifier.weight(0.11f).padding(end = 4.dp),
+                modifier = Modifier
+                    .weight(0.11f)
+                    .padding(end = 4.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
@@ -261,7 +346,7 @@ fun CollapsedDayForecast(
                         )
                     ),
 
-                )
+                    )
             }
             Column(
                 modifier = Modifier.weight(0.341f),
@@ -288,7 +373,10 @@ fun CollapsedDayForecast(
                     Text(
                         text = "${dayInfo.maxwindKph} km/h",
                         style = typography.caption.copy(
-                            color = Color.White
+                            color = Color.White,
+                            platformStyle = PlatformTextStyle(
+                                includeFontPadding = false
+                            )
                         )
                     )
                     Row(
@@ -298,12 +386,16 @@ fun CollapsedDayForecast(
                         Icon(
                             painter = painterResource(id = R.drawable.drop),
                             contentDescription = "Humidity",
+                            tint = Color.White
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
                             text = "${dayInfo.avgHumidity}%",
                             style = typography.caption.copy(
-                                color = Color.White
+                                color = Color.White,
+                                platformStyle = PlatformTextStyle(
+                                    includeFontPadding = false
+                                )
                             )
                         )
                     }
@@ -319,6 +411,7 @@ fun CollapsedDayForecast(
                 Icon(
                     imageVector = Icons.Filled.KeyboardArrowDown,
                     contentDescription = "Expand",
+                    tint = SecondaryText
                 )
             }
         }

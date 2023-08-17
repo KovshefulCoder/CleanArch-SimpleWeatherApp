@@ -35,9 +35,9 @@ class ForecastViewModel @Inject constructor (
         getRemoteForecast()
     }
     fun getRemoteForecast() {
-        val location: String = "moscow"
+        val location: String = "saint%20petersburg"
         val nDaysForForecast: Int = 5
-        val apiKey: String = "bbeeb5bff806437b98f134134231408"
+        val apiKey: String = BuildConfig.API_KEY
         viewModelScope.launch {
             getForecast(location, nDaysForForecast, apiKey)
                 .onEach { result ->
@@ -48,7 +48,6 @@ class ForecastViewModel @Inject constructor (
                                 isLoading = false
                             )
                         }
-
                         is Resource.Error -> {
                             _state.value = state.value.copy(
                                 forecastItems = result.data ?: emptyList(),

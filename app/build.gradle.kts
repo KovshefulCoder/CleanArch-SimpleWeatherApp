@@ -101,4 +101,8 @@ dependencies {
 
     //Coil
     implementation("io.coil-kt:coil-compose:2.4.0")
+
+    //SystemUIController for status bar color
+    implementation("com.google.accompanist:accompanist-systemuicontroller:0.27.0")
+
 }
