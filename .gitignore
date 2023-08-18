@@ -14,7 +14,5 @@
 .externalNativeBuild
 .cxx
 local.properties
-/gradle.properties
-app/src/main/res/drawable/photo_2023_08_17_13_30_37.jpg
 app/src/main/res/drawable/photo_2023_08_17_13_30_37.jpg
 app/src/main/res/drawable/placeholder_image.png
