@@ -14,6 +14,7 @@ This demonstration app displays the weather forecast for Saint Petersburg over t
 * **Clean Architecture + MVVM**
 * Allows **data refresh** via the "Update Forecast" button
 * **Animation** for expanding and collapsing list elements
+* Notify user about request error via Snackbar
 * Code is both **readable and maintainable**
 
 </details>
