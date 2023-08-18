@@ -7,11 +7,11 @@ This demonstration app displays the weather forecast for Saint Petersburg over t
 <details>
 <summary> <h2> Key features </h2> </summary>
 
-* All essential requirements have been met
-* Clean Architecture + MVVM
-* Allows data refresh via the "Update Forecast" button
-* Animations for expanding and collapsing list elements
-* Code is both readable and maintainable
+* **All essential requirements** have been met
+* **Clean Architecture + MVVM**
+* Allows **data refresh** via the "Update Forecast" button
+* **Animation** for expanding and collapsing list elements
+* Code is both **readable and maintainable**
 
 </details>
 
@@ -41,6 +41,12 @@ This demonstration app displays the weather forecast for Saint Petersburg over t
 <details>
 <summary> <h2> App flow on video </h2> </summary>
 
-https://github.com/KovshefulCoder/CleanArch-SimpleWeatherApp/assets/84292117/10bf8181-97d3-4d1a-b7af-e88c7d2fb422
+The video might not be functional due to GitHub issues.
+
+If you encounter this problem, you can **download the video**.
+
+It's a lightweight file ;)
+
+https://github.com/KovshefulCoder/CleanArch-SimpleWeatherApp/assets/84292117/b5c20c59-815a-467c-b914-51eade75320b
 
 </details>
