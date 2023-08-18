@@ -4,7 +4,10 @@
 
 This demonstration app displays the weather forecast for Saint Petersburg over the 5 days.
 
+### [Direct link to code](https://github.com/KovshefulCoder/CleanArch-SimpleWeatherApp/tree/master/app/src/main/java/com/kovsheful/cleanarch_simpleweatherapp)
+
 <details>
+
 <summary> <h2> Key features </h2> </summary>
 
 * **All essential requirements** have been met
